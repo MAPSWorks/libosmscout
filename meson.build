@@ -1,6 +1,6 @@
 project('libosmscout',
         'cpp',
-        meson_version: '>=0.40.0',
+        meson_version: '>=0.46.0',
         default_options: ['cpp_std=c++11', 'buildtype=debugoptimized', 'warning_level=3'],
         license: ['LGPL'])
 
@@ -78,7 +78,7 @@ threadDep = dependency('threads')
 iconvDep = compiler.find_library('iconv', required: false)
 marisaDep = dependency('marisa', required : false)
 
-if compiler.get_id()=='clang'
+if compiler.get_id()=='clang' or compiler.get_id()=='msvc'
   openmpDep = dependency('', required: false)
 else
   openmpDep = dependency('openmp', required: false)
@@ -148,7 +148,9 @@ qt5SvgDep = dependency('qt5', modules: 'Svg', required: false)
 qt5NetworkDep = dependency('qt5', modules: 'Network', required: false)
 qt5LocationDep = dependency('qt5', modules: 'Location', required: false)
 
-if qt5GuiDep.found() and qt5QmlDep.found() and qt5QuickDep.found() and qt5WidgetsDep.found() and qt5NetworkDep.found()
+message('Qt version : @0@ (required >= 5.5)'.format(qt5GuiDep.version()))
+
+if qt5GuiDep.found() and qt5GuiDep.version().version_compare('>=5.5') and qt5QmlDep.found() and qt5QuickDep.found() and qt5WidgetsDep.found() and qt5NetworkDep.found()
   buildClientQt=true
   buildMapQt=true
 else
@@ -254,6 +256,7 @@ message('libosmscout-map-iosx:    @0@'.format(buildMapIOSX))
 message('libosmscout-map-opengl:  @0@'.format(buildMapOpenGL))
 message('libosmscout-map-qt:      @0@'.format(buildMapQt))
 message('libosmscout-map-svg:     @0@'.format(true))
+message('libosmscout-client-qt:   @0@'.format(buildClientQt))
 message('BasemapImport:           @0@'.format(true))
 message('Import:                  @0@'.format(true))
 message('Demos:                   @0@'.format(true))
